@@ -104,9 +104,9 @@ app.put('/update/:id', (req, res) => {
 
 // api to find details from the existing record
 app.get('/record/details', (req, res) => {
-  const { name } = req.query;
- 
-
+  const { name,email,phone } = req.query;
+  // console.log(req.query)
+let results = [...record];
   if (name) {
     const filtered = record.filter(
       item => item.name.toLowerCase() === name.toLowerCase()
@@ -114,8 +114,24 @@ app.get('/record/details', (req, res) => {
     return res.json(filtered);
   }
 
+    if (email) {
+    const filtered = record.filter(
+      item => item.email.toLowerCase().includes(email.toLowerCase())
+    );
+     return res.json(filtered);
+  }
+
+    if (phone) {
+    const filtered = record.filter(
+      item => item.phone.toLowerCase().includes(phone
+        .toLowerCase())
+    );
+    return res.json(filtered);
+  }
   res.json(record);
-});
+}
+
+);
 
 // Start the server
 app.listen(port, () => {
