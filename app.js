@@ -1,8 +1,11 @@
 import express from 'express';
 
+// Middleware to parse incoming JSON payloads
+// app.use(express.json());
 const app = express();
 const port = 4000;
 app.use(express.json());
+
 const record = [
   { id: 1, name: "ankita" ,email:"ankita@gamil.com", phone:"9414489914"},
   { id: 2, name: "parashar" ,email:"pr@gamil.com", phone:"9414489915"},
@@ -12,9 +15,7 @@ const record = [
 ];
 
 
-// Middleware to parse incoming JSON payloads
-app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+
 
 // Define a basic GET route
 app.get('/', (req, res) => {
@@ -75,6 +76,28 @@ app.patch('/update/:id', (req, res) => {
   Object.assign(user, req.body);
 
   res.status(200).json(user);
+});
+
+// update using put request
+app.put('/update/:id', (req, res) => {
+  const userId = parseInt(req.params.id);
+  const userIndex = record.findIndex((u) => u.id === userId);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const { name, email,phone } = req.body;
+  if (!name || !email || !phone) {
+    return res.status(400).json({ message: 'Name and email are required' });
+  }
+
+  // Replace the entire object while keeping the original ID
+  record[userIndex] = { id: userId,
+     name:req.body.name, 
+     email:req.body.email,
+     phone:req.body.phone };
+  res.status(200).json(record[userIndex]);
 });
 // Start the server
 app.listen(port, () => {
