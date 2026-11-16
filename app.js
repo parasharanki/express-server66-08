@@ -12,6 +12,8 @@ const record = [
   { id: 3, name: "yogendra" ,email:"yk@gamil.com", phone:"9414489916"},
   { id: 4, name: "november" ,email:"november@gamil.com", phone:"9414489917"},
   { id: 5, name: "poonam" ,email:"poonam@gamil.com", phone:"9414489918"},
+  { id: 6, name: "akshita" ,email:"aks@gamil.com", phone:"9554489918"},
+
 ];
 
 
@@ -26,7 +28,7 @@ app.get('/', (req, res) => {
 app.post('/add', (req ,res) => {
 
     const {name , email , phone}=req.body;
-    const id = record.length+1
+    const id = Date.now();
         record.push({
             id:id,
             name:name,
@@ -99,6 +101,22 @@ app.put('/update/:id', (req, res) => {
      phone:req.body.phone };
   res.status(200).json(record[userIndex]);
 });
+
+// api to find details from the existing record
+app.get('/record/details', (req, res) => {
+  const { name } = req.query;
+ 
+
+  if (name) {
+    const filtered = record.filter(
+      item => item.name.toLowerCase() === name.toLowerCase()
+    );
+    return res.json(filtered);
+  }
+
+  res.json(record);
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
