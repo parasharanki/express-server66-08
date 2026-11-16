@@ -103,36 +103,56 @@ app.put('/update/:id', (req, res) => {
 });
 
 // api to find details from the existing record
-app.get('/record/details', (req, res) => {
-  const { name,email,phone } = req.query;
-  // console.log(req.query)
-let results = [...record];
-  if (name) {
+// app.get('/record/details', (req, res) => {
+//   const { name,email,phone } = req.query;
+//   // console.log(req.query)
+// let results = [...record];
+//   if (name) {
+//     const filtered = record.filter(
+//       item => item.name.toLowerCase() === name.toLowerCase()
+//     );
+//     return res.json(filtered);
+//   }
+
+//     if (email) {
+//     const filtered = record.filter(
+//       item => item.email.toLowerCase().includes(email.toLowerCase())
+//     );
+//      return res.json(filtered);
+//   }
+
+//     if (phone) {
+//     const filtered = record.filter(
+//       item => item.phone.toLowerCase().includes(phone
+//         .toLowerCase())
+//     );
+//     return res.json(filtered);
+//   }
+//   res.json(record);
+// }
+
+// );
+app.get("/record/details", (req, res) => {
+  const queryParams = Object.keys(req.query);
+
+  if (queryParams.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Enter one or more search terms (name/email/phone)" });
+  } else {
     const filtered = record.filter(
-      item => item.name.toLowerCase() === name.toLowerCase()
+      (item) =>
+        item[queryParams[0]].toLowerCase() ===
+        req.query[queryParams[0]].toLowerCase(),
     );
+
+    if (filtered.length === 0 || filtered !== record.filter) {
+      return res.status(404).json({ message: "No record found" });
+    }
+
     return res.json(filtered);
   }
-
-    if (email) {
-    const filtered = record.filter(
-      item => item.email.toLowerCase().includes(email.toLowerCase())
-    );
-     return res.json(filtered);
-  }
-
-    if (phone) {
-    const filtered = record.filter(
-      item => item.phone.toLowerCase().includes(phone
-        .toLowerCase())
-    );
-    return res.json(filtered);
-  }
-  res.json(record);
-}
-
-);
-
+});
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
