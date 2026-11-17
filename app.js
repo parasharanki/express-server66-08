@@ -1,4 +1,7 @@
 import express from 'express';
+import mongoose from 'mongoose';
+
+
 
 // Middleware to parse incoming JSON payloads
 // app.use(express.json());
@@ -6,15 +9,41 @@ const app = express();
 const port = 4000;
 app.use(express.json());
 
-const record = [
-  { id: 1, name: "ankita" ,email:"ankita@gamil.com", phone:"9414489914"},
-  { id: 2, name: "parashar" ,email:"pr@gamil.com", phone:"9414489915"},
-  { id: 3, name: "yogendra" ,email:"yk@gamil.com", phone:"9414489916"},
-  { id: 4, name: "november" ,email:"november@gamil.com", phone:"9414489917"},
-  { id: 5, name: "poonam" ,email:"poonam@gamil.com", phone:"9414489918"},
-  { id: 6, name: "akshita" ,email:"aks@gamil.com", phone:"9554489918"},
 
-];
+// connecting data base and schema
+const dbConnection = mongoose.connect('mongodb+srv://parasharankita92_db_user:oX9UlQroc9EfTvn3@ankitacluster.waxg5ii.mongodb.net/')
+
+if (dbConnection)
+{
+  console.log("database is connected")
+
+}
+else{
+   console.log("database is not connected")
+}
+//creating schema
+
+const schema = new mongoose.Schema({
+name:{type:String,required:true},
+  email:{type:String,required:true},
+  phone:{type:Number,required:true}
+
+})
+const User = mongoose.model("newUser", schema)
+// const record = [
+//   { id: 1, name: "ankita" ,email:"ankita@gamil.com", phone:"9414489914"},
+
+//   { id: 2, name: "parashar" ,email:"pr@gamil.com", phone:"9414489915"},
+
+//   { id: 3, name: "yogendra" ,email:"yk@gamil.com", phone:"9414489916"},
+
+//   { id: 4, name: "november" ,email:"november@gamil.com", phone:"9414489917"},
+
+//   { id: 5, name: "poonam" ,email:"poonam@gamil.com", phone:"9414489918"},
+
+//   { id: 6, name: "akshita" ,email:"aks@gamil.com", phone:"9554489918"},
+
+// ];
 
 
 
@@ -27,19 +56,20 @@ app.get('/', (req, res) => {
 //api to add data
 app.post('/add', (req ,res) => {
 
-    const {name , email , phone}=req.body;
-    const id = Date.now();
-        record.push({
-            id:id,
+    const {name , email , phone} = req.body;
+     const newUser =   User.create({
             name:name,
             email:email,
-            phone:phone
+            phone:Number(phone),
         })
+if (newUser)
+{
+    res.status(201).json("added");
 
-  res.status(201).json(record);
-
-  
-
+}
+else{
+  res.status(400).json("not added");
+}
 })
 // api to delete data in existing array
 app.delete('/delete/:id', (req ,res) => {
